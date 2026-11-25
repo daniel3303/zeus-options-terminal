@@ -168,7 +168,8 @@ def _render_equibles(tr: dict) -> str:
         name, role = t.get("speakerName"), t.get("speakerRole")
         if name and role:
             return f"{name} · {role}"
-        return name or role or f"#{t.get('speakerIndex') or '?'}"
+        idx = t.get("speakerIndex")
+        return name or role or (f"Speaker {idx}" if idx is not None else "Speaker")
 
     turns = tr.get("turns") or []
     labelled = tr.get("hasSpeakerLabels", True)

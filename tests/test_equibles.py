@@ -116,6 +116,14 @@ def test_page_renders_each_speaker_above_the_words(api, monkeypatch):
     assert "Tesla, Inc. Q3 FY2026 Earnings Call" in html and "2026-10-21" in html
 
 
+def test_unnamed_speaker_gets_a_numbered_label(api):
+    unnamed = {"speakerIndex": 14, "speakerName": None, "speakerRole": None, "text": "Thank you and good morning."}
+    api({"/stocks/TSLA/investor-events": (200, REC["investor_events"]),
+         f"/investor-events/{EVENT_ID}/speakers": (200, {**REC["speakers"], "data": [unnamed]})})
+    from sec_filings import transcript
+    assert '<div class="tr-sp">Speaker 14</div>' in transcript.get_transcript_html("TSLA")
+
+
 def test_page_falls_back_to_youtube_without_equibles(api, monkeypatch):
     api({"/stocks/TSLA/investor-events": (403, REC["unauthorized"])})
     from sec_filings import transcript
